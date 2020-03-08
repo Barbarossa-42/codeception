@@ -19,10 +19,14 @@ class NetteDIModule extends Module
 
 	/** @var callable[] function(Container $container): void; */
 	public $onCreateContainer = [];
+	
+	/** @var array */
+	public $parameters = [];
 
 	/** @var mixed[] */
 	protected $config = [
 		'configFiles' => [],
+		'parameters' => [],
 		'appDir' => null,
 		'logDir' => null,
 		'wwwDir' => null,
@@ -128,11 +132,13 @@ class NetteDIModule extends Module
 			FileSystem::createDir($logDir);
 			$configurator->enableDebugger($logDir);
 		}
-
-		$configurator->addParameters([
+		
+		$parameters = array_merge($this->parameters, [
 			'appDir' => $this->path . ($this->config['appDir'] !== null ? '/' . $this->config['appDir'] : ''),
 			'wwwDir' => $this->path . ($this->config['wwwDir'] !== null ? '/' . $this->config['wwwDir'] : ''),
 		]);
+
+		$configurator->addParameters($parameters);
 
 		$this->clearTempDir();
 		$tempDir = $this->getTempDir();
